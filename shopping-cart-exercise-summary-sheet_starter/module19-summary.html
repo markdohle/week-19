@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Shopping Cart Exercise</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" type="text/css" href="proxima-nova-web-fonts-master/fonts/fonts.css" />
+  </head>
+
+  <body>
+    <div class="container">
+      <img src="mitxprologo.jpg" alt="MIT XPro Logo" width="250px" height="80px" />
+      <h1 class="header-text">Shopping Cart Exercise</h1>
+    </div>
+
+    <p>Please review the concepts covered this week.</p>
+
+    <h2 id="backend-systems">Backend Systems</h2>
+    <p>
+      The backend of a website consists of an application, database, and web server. A backend
+      developer is someone who maintains and creates code for this system, which sends data to the
+      frontend via an API, which is displayed to an end user.
+    </p>
+    <h2 id="apis">APIs</h2>
+    <p>
+      An API sends and receives information to and from the back end and the front end. You can
+      think of the whole system as a restaurant:
+    </p>
+    <ul>
+      <li>The kitchen: The backend of a website, responsible for prepping the data</li>
+      <li>
+        The waiter: The API of the website, responsible for carrying information from the customer
+        to the kitchen and vice versa
+      </li>
+      <li>
+        The menu: The frontend, which displays the available data in an organized, legible format to
+        the the customer
+      </li>
+      <li>The customer: the user of the website</li>
+    </ul>
+
+    <img src="./api-graphic.png" />
+
+    <h2 id="content-management-systems-cms-">Content Management Systems (CMS)</h2>
+    <p>
+      CMS are out-of-the-box backend solutions that make it easy to manage data and connect with the
+      front end. Popular examples are Drupal, Wordpress, and Strapi. Without these options, many
+      frontend developers would have to build a back end from scratch. Modular solutions like these
+      are incredibly popular among front-end developers.
+    </p>
+    <h3 id="strapi">Strapi</h3>
+    <p>
+      Strapi is an open-source, Node.js based Content Management System. You can use Strapi as a
+      database and API framework that connects to the front end of your choosing. In the videos, Dr.
+      Williams uses Strapi to connect the frontend of a shopping cart to the database hosted by
+      Strapi.
+    </p>
+
+    <h2 id="express">Express</h2>
+    <p>
+      Express is a server-side framework for NodeJS which facilitates communication between
+      client-side software and a database. Express uses routes to send and receive data to/from a
+      database to the user facing portion of the app.
+    </p>
+
+    <h2 id="server-side-framework">Server Side Framework</h2>
+    <p>
+      Server-side web frameworks (a.k.a. "web application frameworks") are software frameworks that
+      make it easier to write, maintain and scale web applications. They provide tools and libraries
+      that simplify common web development tasks, including routing URLs to appropriate handlers,
+      interacting with databases, supporting sessions and user authorization, formatting output
+      (e.g. HTML, JSON, XML), and improving security against web attacks.
+    </p>
+
+    <h2 id="postman">Postman</h2>
+    <p>
+      Postman is a tool to test if your APIs are sending and receiving data through HTTP verbs like
+      GET and POST. Postman makes it easy for developers to create, share, test and document APIs.
+      This is done by allowing users to create and save simple and complex HTTP requests, as well as
+      read their responses.
+    </p>
+
+    <a href="https://developer.mozilla.org/en-US/docs/Learn/Server-side/First_steps/Web_frameworks"
+      >Source: MDN</a
+    >
+
+    <p class="footer">© MIT xPRO 2020. All rights reserved.</p>
+  </body>
+</html>
