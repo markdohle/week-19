@@ -48,5 +48,5 @@ What’s The Difference Between Front End and Back End?
 
 You can understand the difference between the front end and the back end through the restaurant experience. Here’s the general idea: Just like there is a menu, waitstaff, and kitchen staff in a restaurant, your web application divides responsibilities between the front end and back end.
 
-![Restaurant API example](/restauant.png)
+<img id="restaurant" src="restaurant.png" width='400' style="position:absolute"> </img>
 
