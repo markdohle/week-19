@@ -37,3 +37,16 @@ In Module 19: Shopping Cart Exercise, you’re going to learn how to integrate a
 
 [Picsum Photos](https://picsum.photos)
 
+
+How React Ties Into Backend Systems And API 
+
+So far in this course, you built various web components, some of which displayed data on a page and others that allowed users to add, edit, or remove data from the page. 
+
+All these applications live on your local computer so others cannot access them. If you want to take these applications to the real world where actual users can interact with them, you will need to build a back end to go with the front end you have already created.  
+
+What’s The Difference Between Front End and Back End? 
+
+You can understand the difference between the front end and the back end through the restaurant experience. Here’s the general idea: Just like there is a menu, waitstaff, and kitchen staff in a restaurant, your web application divides responsibilities between the front end and back end.
+
+![Restaurant API example](/restratant.png)
+
