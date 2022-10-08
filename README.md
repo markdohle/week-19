@@ -204,7 +204,7 @@ Use Postman to send, GET and POST messages to any URL. Talk to Strapi as a datab
 
 ```git clone https://github.com/johntango/c2express01.git```
 
-```cd ceexpress01```
+```cd c2express01```
 
 ```npm install```
 
