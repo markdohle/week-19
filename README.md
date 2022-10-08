@@ -76,7 +76,7 @@ There are two items not discussed in the video that were addressed in the [strap
 - You have to publish, not just save the products.
 - The file path needs to include /api/products ```http://localhost:1337/api/products```
 
-<img id="StraoiBrowserDB" src="StraoiBrowserDB.png" width='400' style="position:absolute"> </img>
+<img id="StrapiBrowserDB" src="StrapiBrowserDB.png" width='400' style="position:absolute"> </img>
 
 
 ### How React Ties Into Backend Systems And API 
@@ -175,4 +175,7 @@ instock:
 
 Role and Permissions were changed to allow for "Public". This did not remove the error as shown in the instructions.
 ```{"data":null,"error":{"status":404,"name":"NotFoundError","message":"Not Found","details":{}}}```. Ref My Bugs for the solution.
+
+7. To manage your project 🚀, go to the administration panel at:
+```http://localhost:1337/admin```
 
