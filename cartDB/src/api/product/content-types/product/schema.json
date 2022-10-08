@@ -20,7 +20,7 @@
     "cost": {
       "type": "integer"
     },
-    "inStock": {
+    "instock": {
       "type": "integer"
     }
   }

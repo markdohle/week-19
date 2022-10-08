@@ -78,6 +78,12 @@ There are two items not discussed in the video that were addressed in the [strap
 
 <img id="StrapiBrowserDB" src="StrapiBrowserDB.png" width='400' style="position:absolute"> </img>
 
+3. Trashing the terminal resulted in losing the localhost:1337. I couldn't figure out how to get it back. The interfered with Postman accessing the strapi database. Searched for solution online but couldn't find one. Probably basic stuff, but I have no idea. So I deleted the cartDB directory and recreated the strapi cartDB in order complete the assignment.
+
+4. Postman POST resulted in error. Not sure where to look for a resolution.
+
+<img id="POSTpostmanError" src="POSTpostmanError.png" width='400' style="position:absolute"> </img>
+
 
 ### How React Ties Into Backend Systems And API 
 
@@ -178,4 +184,37 @@ Role and Permissions were changed to allow for "Public". This did not remove the
 
 7. To manage your project 🚀, go to the administration panel at:
 ```http://localhost:1337/admin```
+
+### Video 19-3 Postman
+
+[Download Postman App](https://www.postman.com/downloads/)
+
+Use Postman to send, GET and POST messages to any URL. Talk to Strapi as a database through this API. Postman also provides the code for GET and POST, which can help with debugging.
+
+1. GET, Send a request to ```localhost:1337/api/products```. The product data appears in the body.
+
+2. POST, Send a request to to ```localhost:1337/api/products```. The product data appears in the body and updates the product database.
+    - Header KEY and VALUE: Content-Type: application/json.
+    - Body: Choose "raw" object to send in "JSON" format. "nuts", in quotes, these others are numbers. "id" is overwritten to ensure a unique "id".
+    - Got to localhost:1337 and LOG IN. Nuts were added.
+
+3. Code: Look at code to make the request in different formats. You need the Headers.
+
+### Video 19-4 Using Postman and Express Web Server
+
+```git clone https://github.com/johntango/c2express01.git```
+
+```cd ceexpress01```
+
+```npm install```
+
+Run web server ```node contacts.js```
+
+Open Postman App and create ExpressWebServer Collection
+- Get ```localhost:3000```. You will see the instructions pop up in the body. POST to /contact and GET /contacts
+- Try to POST
+
+<img id="postmanPOST" src="postmanPOST.png" width='400' style="position:absolute"> </img>
+
+
 
