@@ -4,24 +4,35 @@
   "info": {
     "singularName": "product",
     "pluralName": "products",
-    "displayName": "product"
+    "displayName": "product",
+    "description": ""
   },
   "options": {
-    "draftAndPublish": true
+    "draftAndPublish": false
   },
   "pluginOptions": {},
   "attributes": {
     "name": {
-      "type": "string"
+      "type": "string",
+      "unique": false,
+      "required": false
     },
     "country": {
-      "type": "string"
+      "type": "string",
+      "required": false,
+      "unique": false
     },
     "cost": {
-      "type": "integer"
+      "type": "integer",
+      "required": false,
+      "unique": false,
+      "default": 0
     },
     "instock": {
-      "type": "integer"
+      "type": "integer",
+      "default": 0,
+      "required": false,
+      "unique": false
     }
   }
 }

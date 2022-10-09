@@ -202,6 +202,22 @@ Use Postman to send, GET and POST messages to any URL. Talk to Strapi as a datab
 
 ### Video 19-4 Using Postman and Express Web Server
 
+Postman is a tool to confirm that your API is sending and receiving data properly, through HTTP verbs like GET and POST
+
+Express is a server-side framework for Node.js that facilitates easy communication between client-side software and a database.
+
+Express uses routes to send and receive data between a database and the client.
+
+An API ends data from the front end to the back end of an application and vice versa.
+
+The back end contains an application’s business logic.
+
+The back end is responsible for routing data between a database and a client.
+
+The back end stores and retrieves the necessary data for the front-end section of an application.
+
+A back end can consist of an API that is responsible for sending and receiving data from the front-end section of the application.
+
 ```git clone https://github.com/johntango/c2express01.git```
 
 ```cd c2express01```
@@ -216,5 +232,225 @@ Open Postman App and create ExpressWebServer Collection
 
 <img id="postmanPOST" src="postmanPOST.png" width='400' style="position:absolute"> </img>
 
+### Video 19-5 Shopping Cart Exercise - Refactor Introduction 
 
+There are several ways you can refactor the Shopping Cart application. These are optional as you will focus on building the restocking functionality in this week's assignment. 
+
+1. Import random images from [picsum](https://picsum.photos).
+2. List the price and stock of each item. If stock goes to 0, then don't allow item to go to the cart.
+3. Add the price at Checkout.
+4. Build the delete functionality: deleting an item from the cart should cause checkout to restock the item.
+5. Add stock.
+
+Consider the user interface. Are there adaptations you could make to the delete functionality to make it more intuitive to the user? How can you prevent users from accidentally deleting items from their cart?
+
+In this exercise, you’ll focus on building that restocking functionality. To accomplish this, you’ll need to make a call to a Strapi API and get a fresh list of available products.
+
+Here’s how the reset stock feature works:
+
+- There’s an input field on the page that contains the URL to the Strapi back end
+- When a user clicks the “ReStock Products” button, a call is made to the Strapi back end specified in the input field
+- The result of this call is an updated list of products
+
+Your task is to implement the restock feature. You should add your code to the “cart.jsx” file. More specifically, you need to implement the “restockProducts” function. 
+
+Hints:
+
+Make use of the “doFetch” function to make a call to the API
+Make use of “setItems” to update the existing items
+
+Reference directory ```week-19/restock-shopping-cart_starter```
+
+### Video 19-5  Shopping Cart Exercise - Refactor Restocking Functionality
+
+1. Product Web Component
+
+If restocked, then the ```{list}``` needs to hav the new products.
+
+```
+<h1>Product List</h1>
+<ul style={{ listStyleType: "none" }}>{list}</ul>
+```
+
+The cartlist
+```
+<h1>Cart Contents</h1>
+<Accordion defaultActiveKey="0">{cartList}</Accordion>
+```
+
+The form to restock the products. onSubmit, call restockProducts from the strapi database with ```/${query}```
+```
+<form
+    onSubmit={(event) => {
+        restockProducts(`http://localhost:1337/${query}`);
+        console.log(`Restock called on ${query}`);
+        event.preventDefault();
+        }}
+>
+    <input
+        type="text"
+        value={query}
+        onChange={(event) => setQuery(event.target.value)}
+    />
+    <button type="submit">ReStock Products</button>
+</form>
+```
+restockProduct function is called by the onsubmit event which provides the url. The doFetch function sets the URL with useState. When the useState is changed, it triggers the fetch. ```data``` is the array of new products. Use map to pick out each item of the products. Desctructure ```let { name, country, cost, instock } = item``` to limit the items to name, country, cost, instock as a new object. To setItems, spread the existing items and add the newItems. ```setItems([...items, ...newItems])``` When setItems is changed, the items are changed. The next time the list of items is rendered, the list function returns the product image, button with item name and cost, submit with item name with an onClick event to call addToCart. Change so that they are randomly accessed from picsum.
+
+```
+let list = items.map((item, index) => {
+    //let n = index + 1049;
+    //let url = "https://picsum.photos/id/" + n + "/50/50";
+
+    return (
+      <li key={index}>
+        <Image src={photos[index % 4]} width={70} roundedCircle></Image>
+        <Button variant="primary" size="large">
+          {item.name}:{item.cost}
+        </Button>
+        <input name={item.name} type="submit" onClick={addToCart}></input>
+      </li>
+    );
+```
+
+```
+const restockProducts = (url) => {
+    doFetch(url);
+    let newItems = data.map((item) => {
+      let { name, country, cost, instock } = item;
+      return { name, country, cost, instock };
+    });
+    setItems([...items, ...newItems]);
+  };
+```
+Fetch from the useDataApi function useEffect. It is called when we change the url because it is told to track the url and fetch data when it changes.
+
+```
+const useDataApi = (initialUrl, initialData) => {
+  const { useState, useEffect, useReducer } = React;
+  const [url, setUrl] = useState(initialUrl);
+
+  const [state, dispatch] = useReducer(dataFetchReducer, {
+    isLoading: false,
+    isError: false,
+    data: initialData,
+  });
+  console.log(`useDataApi called`);
+  useEffect(() => {
+    console.log("useEffect Called");
+    let didCancel = false;
+    const fetchData = async () => {
+      dispatch({ type: "FETCH_INIT" });
+      try {
+        const result = await axios(url);
+        console.log("FETCH FROM URl");
+        if (!didCancel) {
+          dispatch({ type: "FETCH_SUCCESS", payload: result.data });
+        }
+      } catch (error) {
+        if (!didCancel) {
+          dispatch({ type: "FETCH_FAILURE" });
+        }
+      }
+    };
+    fetchData();
+    return () => {
+      didCancel = true;
+    };
+  }, [url]);
+  return [state, setUrl];
+};
+```
+
+Products component calls the useDataApi function. doFetch triggers the call which fills in the ```data``` as part of an object coming back from useDataApi.
+
+```
+const [{ data, isLoading, isError }, doFetch] = useDataApi('http://localhost:1337/products', {
+    data: [],
+  });
+```
+
+```
+    return (
+      <li key={index}>
+        <Image src={photos[index % 4]} width={70} roundedCircle></Image>
+        <Button variant="primary" size="large">
+          {item.name}:{item.cost}
+        </Button>
+        <input name={item.name} type="submit" onClick={addToCart}></input>
+      </li>
+    );
+  });
+  let cartList = cart.map((item, index) => {
+    return (
+      <Accordion.Item key={1+index} eventKey={1 + index}>
+      <Accordion.Header>
+        {item.name}
+      </Accordion.Header>
+      <Accordion.Body onClick={() => deleteCartItem(index)}
+        eventKey={1 + index}>
+        $ {item.cost} from {item.country}
+      </Accordion.Body>
+    </Accordion.Item>
+    );
+  });
+
+  let finalList = () => {
+    let total = checkOut();
+    let final = cart.map((item, index) => {
+      return (
+        <div key={index} index={index}>
+          {item.name}
+        </div>
+      );
+    });
+    return { final, total };
+  };
+
+  const checkOut = () => {
+    let costs = cart.map((item) => item.cost);
+    const reducer = (accum, current) => accum + current;
+    let newTotal = costs.reduce(reducer, 0);
+    console.log(`total updated to ${newTotal}`);
+    return newTotal;
+  };
+  // TODO: implement the restockProducts function
+  const restockProducts = (url) => {};
+
+  return (
+    <Container>
+      <Row>
+        <Col>
+          <h1>Product List</h1>
+          <ul style={{ listStyleType: "none" }}>{list}</ul>
+        </Col>
+        <Col>
+          <h1>Cart Contents</h1>
+          <Accordion defaultActiveKey="0">{cartList}</Accordion>
+        </Col>
+        <Col>
+          <h1>CheckOut </h1>
+          <Button onClick={checkOut}>CheckOut $ {finalList().total}</Button>
+          <div> {finalList().total > 0 && finalList().final} </div>
+        </Col>
+      </Row>
+      <Row>
+        <form
+          onSubmit={(event) => {
+            restockProducts(`http://localhost:1337/${query}`);
+            console.log(`Restock called on ${query}`);
+            event.preventDefault();
+          }}
+        >
+          <input
+            type="text"
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+          />
+          <button type="submit">ReStock Products</button>
+        </form>
+      </Row>
+    </Container>
+  );
+```
 
