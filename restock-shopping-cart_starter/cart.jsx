@@ -13,7 +13,8 @@ const Cart = (props) => {
 
   return <Accordion defaultActiveKey="0">{list}</Accordion>;
 };
-
+//useDataApi takes care of state
+//fetch data from the warehouse changes the url and fires the fetch from the database
 const useDataApi = (initialUrl, initialData) => {
   const { useState, useEffect, useReducer } = React;
   const [url, setUrl] = useState(initialUrl);
@@ -73,7 +74,7 @@ const dataFetchReducer = (state, action) => {
       throw new Error();
   }
 };
-
+//web component
 const Products = (props) => {
   const [items, setItems] = React.useState(products);
   const [cart, setCart] = React.useState([]);
@@ -88,39 +89,56 @@ const Products = (props) => {
     Image,
     Input,
   } = ReactBootstrap;
-  //  Fetch Data
+  //  Fetch Data by calling the useDataApi function.
   const { Fragment, useState, useEffect, useReducer } = React;
-  const [query, setQuery] = useState("http://localhost:1337/products");
+  const [query, setQuery] = useState("http://localhost:1337/api/products");
+  //"data" comes back as part of the object { data, isLoading, isError }
   const [{ data, isLoading, isError }, doFetch] = useDataApi(
-    "http://localhost:1337/products",
+    "http://localhost:1337/api/products",
     {
       data: [],
     }
   );
   console.log(`Rendering Products ${JSON.stringify(data)}`);
   // Fetch Data
+  //When we add to the cart, we need to coordinate with the checkout.
   const addToCart = (e) => {
     let name = e.target.name;
+    //filter creates a new array. In this case, it is an array with one 
     let item = items.filter((item) => item.name == name);
+    //validate instock.
+    if (item[0].instock == 0) return;
+    //subract the item from the stock to coordinate with the product list.
+    item[0].instock = item[0].instock - 1;
     console.log(`add to Cart ${JSON.stringify(item)}`);
+    //spread the existing items in the cart and the add the new items to setCart and update useState.
     setCart([...cart, ...item]);
-    //doFetch(query);
   };
-  const deleteCartItem = (index) => {
-    let newCart = cart.filter((item, i) => index != i);
+  //delete index of the items in the cart, not the Product list. Triggered the onCick event in the cartItems function.
+  const deleteCartItem = (delIndex) => {
+    //use filter to find the item to delete. Keep all items not equal to the item clicked on.
+    let newCart = cart.filter((item, i) => delIndex != i);
+    let target = cart.filter((item, index) => delIndex == index);
+    //map all the items in the product list and if the target item matches any existing items, then add stock to that item.
+    let newItems = items.map((item, index) => {
+      if (item.name == target[0].name) item.instock = item.instock + 1;
+      return item;
+    });
     setCart(newCart);
+    setItems(newItems);
   };
-  const photos = ["apple.png", "orange.png", "beans.png", "cabbage.png"];
+  //const photos = ["apple.png", "orange.png", "beans.png", "cabbage.png"];
 
   let list = items.map((item, index) => {
-    //let n = index + 1049;
-    //let url = "https://picsum.photos/id/" + n + "/50/50";
+    let n = index + 1049;
+    //set the piscum id, which is part of the url with n(random to get different photos for each)."/500/500" changes the image size. What happens if you make it /5/5?
+    let urlPhotos = "https://picsum.photos/id/" + n + "/500/500";
 
     return (
       <li key={index}>
-        <Image src={photos[index % 4]} width={70} roundedCircle></Image>
+        <Image src={urlPhotos} width={70} roundedCircle></Image>
         <Button variant="primary" size="large">
-          {item.name}:{item.cost}
+          {item.name}:${item.cost}-Stock={item.instock}
         </Button>
         <input name={item.name} type="submit" onClick={addToCart}></input>
       </li>
@@ -128,12 +146,12 @@ const Products = (props) => {
   });
   let cartList = cart.map((item, index) => {
     return (
-      <Accordion.Item key={1+index} eventKey={1 + index}>
+      <Accordion.Item key={1+index} eventkey={1 + index}>
       <Accordion.Header>
         {item.name}
       </Accordion.Header>
       <Accordion.Body onClick={() => deleteCartItem(index)}
-        eventKey={1 + index}>
+        eventkey={1 + index}>
         $ {item.cost} from {item.country}
       </Accordion.Body>
     </Accordion.Item>
@@ -141,7 +159,9 @@ const Products = (props) => {
   });
 
   let finalList = () => {
+    //total price at from the checkOut function.
     let total = checkOut();
+    //map all the items in the cart. Return the names of all the items in the cart.
     let final = cart.map((item, index) => {
       return (
         <div key={index} index={index}>
@@ -149,6 +169,7 @@ const Products = (props) => {
         </div>
       );
     });
+    //return the final and total for use in the container tags in the checkout column. 
     return { final, total };
   };
 
@@ -160,8 +181,19 @@ const Products = (props) => {
     return newTotal;
   };
   // TODO: implement the restockProducts function
-  const restockProducts = (url) => {};
-
+    //set url with doFetch. When the useState is changed, it will trigger the fetch. Make sure the fetch comes back as "data". Where is data defined? It needs to be an array of the new products.
+    //pick out each item of the products. The items come in with more attributes than are needed. 
+      //destructure item and put into an object that contains only the attributes we need.
+      //Return the destructured object into newItems for each item(product). newItems stores an array of all the items as objects(products).
+    //spread existing items and add in all the newItems. This changes the items. And the next time the list of items is rerendered, the "list" is updated.
+    const restockProducts = (url) => {
+      doFetch(url);
+      let newItems = data.map((item) => {
+        let { name, country, cost, instock } = item;
+        return { name, country, cost, instock };
+      });
+      setItems([...items, ...newItems]);
+    };
   return (
     <Container>
       <Row>
@@ -171,7 +203,7 @@ const Products = (props) => {
         </Col>
         <Col>
           <h1>Cart Contents</h1>
-          <Accordion defaultActiveKey="0">{cartList}</Accordion>
+          <Accordion>{cartList}</Accordion>
         </Col>
         <Col>
           <h1>CheckOut </h1>
@@ -182,8 +214,10 @@ const Products = (props) => {
       <Row>
         <form
           onSubmit={(event) => {
-            restockProducts(`http://localhost:1337/${query}`);
+            //${query} should be products
+            restockProducts(`http://localhost:1337/api/${query}`);
             console.log(`Restock called on ${query}`);
+            //prevent this from being called multpile times.
             event.preventDefault();
           }}
         >
