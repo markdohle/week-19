@@ -79,6 +79,11 @@ const Products = (props) => {
   const [items, setItems] = React.useState(products);
   const [cart, setCart] = React.useState([]);
   const [total, setTotal] = React.useState(0);
+  
+  console.log(`these are in the cart ${JSON.stringify(cart)}`)
+
+  
+  
   const {
     Card,
     Accordion,
@@ -91,7 +96,7 @@ const Products = (props) => {
   } = ReactBootstrap;
   //  Fetch Data by calling the useDataApi function.
   const { Fragment, useState, useEffect, useReducer } = React;
-  const [query, setQuery] = useState("http://localhost:1337/api/products");
+  const [query, setQuery] = useState("products");
   //"data" comes back as part of the object { data, isLoading, isError }
   const [{ data, isLoading, isError }, doFetch] = useDataApi(
     "http://localhost:1337/api/products",
@@ -104,15 +109,51 @@ const Products = (props) => {
   //When we add to the cart, we need to coordinate with the checkout.
   const addToCart = (e) => {
     let name = e.target.name;
-    //filter creates a new array. In this case, it is an array with one 
+
+    //filter creates a new array. In this case, it is an array with one
     let item = items.filter((item) => item.name == name);
+    if (item[0].incart > 0) {
+      item[0].incart = item[0].incart + 1
+    } else {
+      item[0].incart = 1
+    }
+    
     //validate instock.
     if (item[0].instock == 0) return;
     //subract the item from the stock to coordinate with the product list.
     item[0].instock = item[0].instock - 1;
-    console.log(`add to Cart ${JSON.stringify(item)}`);
+
+    if (item[0].incart == 1) {
+      setCart([...cart,...item]);
+    } else {
+      setCart([...cart]);
+    };
+    
+    console.log(`addToCart: let ${name} = e.target.name = `)
+    console.log(`addToCart: filter out ${item} from the items array. If [object Object], it needs JSON.stringify(item)`)
+    console.log(`addToCart: This is the item added to the cart ${JSON.stringify(item)}`);
+    console.log(`addToCart: item.instock = ${item.instock}`)
+    console.log(`addToCart: item[0].instock = ${item[0].instock}`)
+    console.log(`addToCart: item[0].incart = ${item[0].incart}`)
+   /*
+    if (item[0].incart > 0) {
+      cart.map((cartItem,cartIndex) => {
+        console.log(`cartItem ${cartItem.name}`)
+        if( item[0].name = cartItem.name) {
+          item[0].incart = item[0].incart + 1
+          console.log(`does the item have an "incart" key? ${item[0].incart}`)
+          setCart(cart)
+        }
+      });
+    } else {
+        item[0].incart = 1
+        setCart([...cart, ...item])
+      };
+    //item[0].incart = 1
+    */
     //spread the existing items in the cart and the add the new items to setCart and update useState.
-    setCart([...cart, ...item]);
+    //setCart([...cart, ...item])
+    
   };
   //delete index of the items in the cart, not the Product list. Triggered the onCick event in the cartItems function.
   const deleteCartItem = (delIndex) => {
@@ -145,10 +186,15 @@ const Products = (props) => {
     );
   });
   let cartList = cart.map((item, index) => {
+    console.log(`cartList: item = ${JSON.stringify(item)}`)
+    console.log(`cartList: index = ${index}`)
+    console.log(`cartList: item.name = ${item.name}`)
+    console.log(`cartList: item.incart = ${item.incart}`)
+
     return (
       <Accordion.Item key={1+index} eventkey={1 + index}>
       <Accordion.Header>
-        {item.name}
+        {item.name}-{item.incart}
       </Accordion.Header>
       <Accordion.Body onClick={() => deleteCartItem(index)}
         eventkey={1 + index}>
@@ -181,15 +227,18 @@ const Products = (props) => {
     return newTotal;
   };
   // TODO: implement the restockProducts function
-    //set url with doFetch. When the useState is changed, it will trigger the fetch. Make sure the fetch comes back as "data". Where is data defined? It needs to be an array of the new products.
+    //set url with doFetch. When the useState is changed, it will trigger the fetch. Make sure the fetch comes back as "data". Where is data defined? It comes back inside an object from doFetch(url). This can be done by creating a variable "b" and setting it equal to the object that holds data. Then use dot notation to access the data array b.data.map. It needs to be an array of the new products.
     //pick out each item of the products. The items come in with more attributes than are needed. 
       //destructure item and put into an object that contains only the attributes we need.
       //Return the destructured object into newItems for each item(product). newItems stores an array of all the items as objects(products).
     //spread existing items and add in all the newItems. This changes the items. And the next time the list of items is rerendered, the "list" is updated.
     const restockProducts = (url) => {
       doFetch(url);
-      let newItems = data.map((item) => {
+      let b = data
+      //console.log(b.data[0])
+      let newItems = b.data.map((item) => {
         let { name, country, cost, instock } = item;
+        item.incart = 0
         return { name, country, cost, instock };
       });
       setItems([...items, ...newItems]);

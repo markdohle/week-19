@@ -208,7 +208,7 @@ Express is a server-side framework for Node.js that facilitates easy communicati
 
 Express uses routes to send and receive data between a database and the client.
 
-An API ends data from the front end to the back end of an application and vice versa.
+An API sends data from the front end to the back end of an application and vice versa.
 
 The back end contains an application’s business logic.
 
@@ -263,38 +263,12 @@ Reference directory ```week-19/restock-shopping-cart_starter```
 
 ### Video 19-5  Shopping Cart Exercise - Refactor Restocking Functionality
 
-1. Product Web Component
+Product Web Component
 
 If restocked, then the ```{list}``` needs to hav the new products.
 
-```
-<h1>Product List</h1>
-<ul style={{ listStyleType: "none" }}>{list}</ul>
-```
-
-The cartlist
-```
-<h1>Cart Contents</h1>
-<Accordion defaultActiveKey="0">{cartList}</Accordion>
-```
-
 The form to restock the products. onSubmit, call restockProducts from the strapi database with ```/${query}```
-```
-<form
-    onSubmit={(event) => {
-        restockProducts(`http://localhost:1337/${query}`);
-        console.log(`Restock called on ${query}`);
-        event.preventDefault();
-        }}
->
-    <input
-        type="text"
-        value={query}
-        onChange={(event) => setQuery(event.target.value)}
-    />
-    <button type="submit">ReStock Products</button>
-</form>
-```
+
 restockProduct function is called by the onsubmit event which provides the url. The doFetch function sets the URL with useState. When the useState is changed, it triggers the fetch. ```data``` is the array of new products. Use map to pick out each item of the products. Desctructure ```let { name, country, cost, instock } = item``` to limit the items to name, country, cost, instock as a new object. To setItems, spread the existing items and add the newItems. ```setItems([...items, ...newItems])``` When setItems is changed, the items are changed. The next time the list of items is rendered, the list function returns the product image, button with item name and cost, submit with item name with an onClick event to call addToCart. Change so that they are randomly accessed from picsum.
 
 What is doFetch? Is it a function? Where and how is it defined?
